@@ -1,20 +1,22 @@
 ## Table of Contents
-- [General API Information](#general-api-information)
-- [General API Information on Endpoints](#general-api-information-on-endpoints)
+- [General API Information](#general-API-information)
+- [General API Information on Endpoints](#general-information-endpoints)
 - [Limits](#limits)
+- [Endpoint security type](#endpoint-security-type)
+- [Signed Endpoint Security](#signed-endpoint-security)
+- [Timing Security](#timing-security)
+- [Http Status Codes](#http-status-codes)
 - [Error Messages](#error-messages)
-- [Ticker](#market-ticker)
-- [Order Book](#order-book)
-- [Trade History](#trade-history)
+- [Permission Scopes](#permission-scopes)
 
 # Public Rest API Documentation for Sistemkoin (v1)
 
 ## General API Information
-- Base endpoint is : ``https://api.sistemkoin.com/``
+- Base endpoint is : ``https://api.sistemkoin.com/api/``
 - All endpoints return either a **JSON object** or **Array**
 - All time and  timestamp related fields are in **millisecond**
 
-## General Information on Endpoints
+## General Information Endpoints
 - All endpoints contain the **status** field. This will tell you the success of your request, whether ``success`` or ``failure``.
 - As a result of all successful requests, endpoints respond in a fixed structure.
 
@@ -60,70 +62,23 @@ Sample failure request payload:
 - A ``SIGNED`` endpoint also requires a parameter, ``timestamp``, to be sent which should be the millisecond timestamp of when the request was created and sent.
 - An additional parameter, ``recvWindow``, may be sent to specify the number of milliseconds after ``timestamp`` the request is valid for. If ``recvWindow`` is not sent, **it defaults to 5000**
 
+## Http Status Codes
+- HTTP ``4XX`` return codes are used for malformed requests; the issue is on the sender's side
+- HTTP ``401`` return code is used when **wrong api key**
+- HTTP ``418`` return code is when breaking a request rate limit
+- HTTP ``429`` return code is used when an API Key has been auto-banned for continuing to send requests after receiving 429 codes.
+- HTTP ``5XX`` return codes are used for internal errors; the issue is on Sistemkoin's side
 
+## Error Messages
+- ``request_timeout`` - This message is given when time security is not exceeded
+- ``incorrect_data_format`` - This message is given when ``testSignature`` endpoint failure result
+- ``this_area_not_allowed`` - This message is given when API Key is not have required scope permission
+- ``market_not_found`` - This message is given when market not found
+- ``cant_receive_fee_information`` - This error is given if an unexpected error is encountered during the calculation of user fee rates
+- ``socket_is_busy`` - This error is given when the service is too busy when going through the validation check to join the socket connection
 
-
-## Order Book
-
-**Request &#x25BC;**
-
-```
-GET /orderbook?symbol=BTCTRY&limit=10
-```
-
-**Parameters &#x25BC;**
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-symbol | STRING | YES | Market Pair Symbol (ex : BTCTRY)
-limit | INT | YES | max 50. Valid limits : [10, 25, 50]
-
-**Response &#x25BC;**
-
-``` javascript
-{
-    "timestamp": 1562923070,
-    "bids": [
-        [
-          "66632.00000000",    // Price
-          "0.15342861"         // Amount
-         ],
-    ]
-    "asks": [
-        [
-          "67303.00000000",    // Price
-          "0.21174063"         // Amount
-        ],
-    ]
-```
-
-## Trade History
-
-**Request &#x25BC;**
-
-```
-GET /tradehistory?symbol=BTCTRY&limit=25
-```
-
-**Parameters &#x25BC;**
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-symbol | STRING | YES | Market Pair Symbol (ex : BTCTRY)
-limit | INT | YES | max 50. Valid limits : [10, 25, 50]
-
-**Response &#x25BC;**
-
-``` javascript
-{
-    "data": [
-        {
-            "price": "67345.00000000",  // Price
-            "volume": "0.03077852",     // Amount
-            "funds": "2072.77942940",   // Total Amount
-            "side": "bid",              // Transaction type (bid/ask)
-            "timestamp": 1562923268     // Trade Time (local)
-        },
-    ]
-}
-```
+## Permission Scopes
+- ``trade`` - Required scope for create, delete order
+- ``show_balances`` - Required scope for get user balances
+- ``show_account_info`` - Required scope for get user & profile information
+- ``show_history`` - Required scope for get order history & trade history

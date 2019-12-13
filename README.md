@@ -1,47 +1,67 @@
-# Public API Documentation
-
-You can use our API to access public data, which can get information.
-
 ## Table of Contents
-- [Usage](#usage)
+- [General API Information](#general-api-information)
+- [General API Information on Endpoints](#general-api-information-on-endpoints)
+- [Limits](#limits)
+- [Error Messages](#error-messages)
 - [Ticker](#market-ticker)
 - [Order Book](#order-book)
 - [Trade History](#trade-history)
 
-## Usage
+# Public Rest API Documentation for Sistemkoin (v1)
 
-**The base endpoint is:**
+## General API Information
+- Base endpoint is : ``https://api.sistemkoin.com/``
+- All endpoints return either a **JSON object** or **Array**
+- All time and  timestamp related fields are in **millisecond**
+
+## General Information on Endpoints
+- All endpoints contain the **status** field. This will tell you the success of your request, whether ``success`` or ``failure``.
+- As a result of all successful requests, endpoints respond in a fixed structure.
+
+Sample successful request payload:
 ```
-https://api.sistemkoin.com
-```
-
-## Market Ticker
-
-**Request &#x25BC;**
-
-```
-GET /ticker
-```
-
-**Response &#x25BC;**
-
-``` javascript
 {
-    "EURO": {
-        "BTC": {
-            "symbol": "BTC",                // Symbol of the currency
-            "high": "10384.00000000",       // Highest price in last 24 hours
-            "low": "10019.00000000",        // Lowest price in last 24 hours
-            "askPrice": "11685.00000000",   // Lowest current ask price
-            "bidPrice": "8123.00000000",    // Highest current bid price
-            "current": "10360.00000000",    // Last Price
-            "volume": "30002.78711068",     // Total volume in last 24 hours
-            "changeAmount": "225.00000000", // Change in last 24 hours
-            "changePercentage": "2.22"      // Change percentage in last 24 hours
-        }
-    }
+    "status": "success",
+    "data": {...}
 }
 ```
+
+
+Sample failure request payload:
+```
+{
+    "status": "failure",
+    "message": "{ERROR_MESSAGE_KEY}"
+}
+```
+
+- For ``GET`` endpoints, parameters **must** be send as a ``query string``
+- For ``POST``, ``DELETE``, ``PATCH``, ``PUT`` endpoints, the parameters may be send as a ``query string`` or in the ``request body``. You may mix parameters between both the ``request body`` and ``query string``
+- Parameter orders is unimportant in **unsigned** endpoints
+
+## Limits
+- Currently request limit is : ``2 Request per second``
+- When server returns ``Http 429 [Too many request]``, it's your obligation as an API to back off and not spam the API
+- **Repeatedly violating rate limits and/or failing to back off after receiving 429s will result in an automated IP ban (``HTTP 418 [I'm a Teapot]``)**
+- IP bans are tracked and **scale in duration** for repeat offenders, **from 3 minutes to 3 days**
+- A ``Retry-After`` header is sent with a 418 responses and will give the number of seconds required to wait.
+- **The limits on the API are based on the API-KEY, not the IP addresses**
+
+## Endpoint security type
+- API Keys & Secrets are **case-sensitive**
+- Each endpoint requires **API Key** via ``X-STK-ApiKey``
+- API Keys require ``scope permission`` for some endpoints
+
+## Signed Endpoint Security
+- ``SIGNED`` endpoints require an additional parameter, ``signature``, to be sent in the ``query string`` or ``request body``
+- Endpoints use ``HMAC SHA256`` signatures. The ``HMAC SHA256`` signature is a keyed ``HMAC SHA256`` operation. Use your ``apiSecret`` as the key and totalParams as the value for the HMAC operation
+
+## Timing Security
+- A ``SIGNED`` endpoint also requires a parameter, ``timestamp``, to be sent which should be the millisecond timestamp of when the request was created and sent.
+- An additional parameter, ``recvWindow``, may be sent to specify the number of milliseconds after ``timestamp`` the request is valid for. If ``recvWindow`` is not sent, **it defaults to 5000**
+
+
+
 
 ## Order Book
 

@@ -44,8 +44,8 @@ Sample failure request payload:
 ## Limits
 - Currently request limit is : ``2 Request per second``
 - When server returns ``Http 429 [Too many request]``, it's your obligation as an API to back off and not spam the API
-- **Repeatedly violating rate limits and/or failing to back off after receiving 429s will result in an automated IP ban (``HTTP 418 [I'm a Teapot]``)**
-- IP bans are tracked and **scale in duration** for repeat offenders, **from 3 minutes to 3 days**
+- **Repeatedly violating rate limits and/or failing to back off after receiving 429s will result in an automated API Key ban (``HTTP 418 [I'm a Teapot]``)**
+- API Key bans are tracked and **scale in duration** for repeat offenders, **from 3 minutes to 3 days**
 - A ``Retry-After`` header is sent with a 418 responses and will give the number of seconds required to wait.
 - **The limits on the API are based on the API-KEY, not the IP addresses**
 
@@ -70,15 +70,15 @@ Sample failure request payload:
 - HTTP ``5XX`` return codes are used for internal errors; the issue is on Sistemkoin's side
 
 ## Error Messages
-- ``request_timeout`` - This message is given when time security is not exceeded
-- ``incorrect_data_format`` - This message is given when ``testSignature`` endpoint failure result
-- ``this_area_not_allowed`` - This message is given when API Key is not have required scope permission
+- ``request_timeout`` - This message is given when time security could not be passed
+- ``incorrect_data_format`` - This message is given when ``testSignature`` endpoint fails
+- ``this_area_not_allowed`` - This message is given when API Key does not have required scope permission
 - ``market_not_found`` - This message is given when market not found
 - ``cant_receive_fee_information`` - This error is given if an unexpected error is encountered during the calculation of user fee rates
 - ``socket_is_busy`` - This error is given when the service is too busy when going through the validation check to join the socket connection
 
 ## Permission Scopes
-- ``trade`` - Required scope for create, delete order
-- ``show_balances`` - Required scope for get user balances
-- ``show_account_info`` - Required scope for get user & profile information
-- ``show_history`` - Required scope for get order history & trade history
+- ``trade`` - Required scope to create, delete order
+- ``show_balances`` - Required scope to get user balances
+- ``show_account_info`` - Required scope to get user & profile information
+- ``show_history`` - Required scope to get order history & trade history

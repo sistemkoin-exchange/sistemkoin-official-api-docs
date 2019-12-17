@@ -21,6 +21,7 @@
 - As a result of all successful requests, endpoints respond in a fixed structure.
 
 Sample successful request payload:
+
 ```
 {
     "status": "success",
@@ -29,13 +30,16 @@ Sample successful request payload:
 ```
 
 
+
 Sample failure request payload:
+
 ```
 {
     "status": "failure",
     "message": "{ERROR_MESSAGE_KEY}"
 }
 ```
+
 
 - For ``GET`` endpoints, parameters **must** be send as a ``query string``
 - For ``POST``, ``DELETE``, ``PATCH``, ``PUT`` endpoints, the parameters may be send as a ``query string`` or in the ``request body``. You may mix parameters between both the ``request body`` and ``query string``
@@ -76,9 +80,421 @@ Sample failure request payload:
 - ``market_not_found`` - This message is given when market not found
 - ``cant_receive_fee_information`` - This error is given if an unexpected error is encountered during the calculation of user fee rates
 - ``socket_is_busy`` - This error is given when the service is too busy when going through the validation check to join the socket connection
+- ``amount_must_be_above_zero`` - This error is given when the trade amount is equal to or below zero
+- ``socket_is_busy`` - This error is given when the service is too busy when going through the validation check to join the socket connection
+- ``there_is_no_pair_value`` - This error is given when given tade pair not found
+- ``you_can_not_trade_below_minimum_trade_amount`` - This error is given when trade amount is minimum permitted trade amount
+- ``transaction_is_not_available_right_now_for_this_coin`` - This error is given when one of the coins is not available for trading
+- ``trade_limits_exceeded`` - This error is given when trade price is above or below current rate
+- ``transaction_is_not_available_right_now_for_this_coin`` - This error is given when one of the coins is not available for trading
+- ``do_not_have_currency`` - This error is given when user does not have the coin to be sold
+- ``do_not_have_enough_balance`` - This error is given when user does not have enough balance for the coin to be sold
+- ``do_not_have_currency`` - This error is given when user does not have the coin to be sold
+- ``trade_failed`` - This error is given when trade failed due to an error on the api side
 
 ## Permission Scopes
 - ``trade`` - Required scope to create, delete order
 - ``show_balances`` - Required scope to get user balances
 - ``show_account_info`` - Required scope to get user & profile information
 - ``show_history`` - Required scope to get order history & trade history
+
+
+## SIGNED Endpoint Examples for POST /api/v1/market
+Here is a step-by-step example of how to send a valid signed payload from the Linux command line using echo, openssl, and curl.
+
+
+| Parameter  | Value |
+| ------------- | ------------- |
+| symbol  | BTCTRY  |
+| type  | BUY  |
+| amount| 1  |
+| price		  | 0.1  |
+| recvWindow		  | 5000  |
+| timestamp		  | 1499827319559  |
+
+
+## Example 1: As a request body
+
+- ##### requestBody:
+
+```
+symbol=BTCTRY&type=BUY&amount=1&price=0.1&recvWindow=5000&timestamp=1499827319559
+```
+
+- ##### HMAC SHA256 signature:
+
+```
+[linux]$ echo -n "symbol=BTCTRY&type=SELL&amount=1&price=49000&recvWindow=5000&timestamp=2573117658 | openssl dgst -sha256 -hmac "9d3fcd92dfc8590773cb38ade681f8ec9cfe1b511f6508c49681da88167df422"
+(stdin)= 6616471dd1bd11caa6363fbc52efc1d37e82ce7fa678328d3c7168e5c6a7ace8
+```
+
+-  #####  curl command:
+
+> (HMAC SHA256)
+```
+[linux]$ curl -H "X-MBX-APIKEY: [API_KEY]" -X POST 'https://api.sistemkoin.com/api/v1/market' -d 'symbol=BTCTRY&type=SELL&amount=1&price=49000&recvWindow=5000&timestamp=2573117658&signature=6616471dd1bd11caa6363fbc52efc1d37e82ce7fa678328d3c7168e5c6a7ace8'
+```
+
+## Example 2: As a query string
+- ##### queryString:
+```
+symbol=BTCTRY&type=SELL&amount=1&price=49000&recvWindow=5000&timestamp=2573117658&signature=6616471dd1bd11caa6363fbc52efc1d37e82ce7fa678328d3c7168e5c6a7ace8
+```
+
+- ##### HMAC SHA256 signature:
+
+```
+[linux]$ echo -n "symbol=BTCTRY&type=SELL&amount=1&price=49000&recvWindow=5000&timestamp=2573117658" | openssl dgst -sha256 -hmac "9d3fcd92dfc8590773cb38ade681f8ec9cfe1b511f6508c49681da88167df422"
+(stdin)= 6616471dd1bd11caa6363fbc52efc1d37e82ce7fa678328d3c7168e5c6a7ace8
+```
+
+- ##### curl command:
+
+> (HMAC SHA256)
+```
+[linux]$ curl -H "X-MBX-APIKEY: [API_KEY]" -X POST 'https://api.sistemkoin.com/api/v1/market?symbol=BTCTRY&type=SELL&amount=1&price=49000&recvWindow=5000&timestamp=2573117658&signature=6616471dd1bd11caa6363fbc52efc1d37e82ce7fa678328d3c7168e5c6a7ace8'
+```
+
+- Terminology base asset refers to the asset that is the quantity of a symbol. quote asset refers to the asset that is the price of a symbol. ENUM definitions Symbol status (status):
+
+### Status
+* PARTIALLY_FILLED
+* FILLED
+* CANCELED
+
+### Market Types
+* BUY
+* SELL
+
+
+### Cancel Open Order (Require Signature)
+
+```
+DELETE /api/v1/market
+```
+
+| Parameter  | Value |
+| ------------- | ------------- |
+| orderID | {order_id} | 
+| signature | [SIGNATURE]
+
+- #### Request:
+
+```
+{
+    "orderID": "{order_id}",
+    "signature": "{SIGNATURE}" 
+}
+```
+
+- #### Response:
+```
+{
+    "status": "success|failure"
+}
+```
+
+### Account Order History 
+
+```
+GET /api/v1/account/orders
+```
+
+- Endpoint will give user's order history
+
+#### Response Details
+
+| Name | Type |  Description |
+| ------------- | ------------- | ------------- |
+|id             | INT  | ID of the trade |
+|coin           | INT  | Traded Coin |
+|pairCoin       | INT  | Traded Pair Coin|
+|pair           | INT  | Symbol |
+|amount         | FLOAT  | Traded Amount |
+|price          | INT  | Traded Price|
+|coinPrecision  | INT  | Traded Coin's Decimal Number|
+|pairCoinPrecision | INT  | Traded Pair Coin's Decimal Number|
+|isActive       | INT  | Pair's status|
+
+
+#### Response Example
+
+```
+{
+    "status": "success",
+    "data" : [
+         {
+             "id": 10000
+             "coin": "BTC"
+             "pairCoin": "TRY"
+             "pair": "BTCTRY"
+             "average": "70010.00000000"
+             "triggerPrice": "70010.00000000"
+             "remainingAmount": "0.24583160"
+             "amount": "1.00000000"
+             "orderStatus": "PENDING"
+             "coinPrecision": 8
+             "pairCoinPrecision": 2
+             "isActive": true
+         },
+         {
+             "id": 10001
+             "coin": "BTC"
+             "pairCoin": "TRY"
+             "pair": "BTCTRY"
+             "average": "70010.00000000"
+             "triggerPrice": "70010.00000000"
+             "remainingAmount": "0.1"
+             "amount": "1.00000000"
+             "orderStatus": "FILLED"
+             "coinPrecision": 8
+             "pairCoinPrecision": 2
+             "isActive": true
+         }
+    ]
+}
+```
+
+
+
+### Account Trade History
+
+```
+GET /api/v1/account/trades
+```
+
+- Endpoint will give user's trade history
+
+#### Response Details
+
+| Name | Type |  Description |
+| ------------- | ------------- | ------------- |
+|id             | INT  | ID of the trade |
+|coin           | INT  | Traded Coin |
+|pairCoin       | INT  | Traded Pair Coin|
+|pair           | INT  | Symbol |
+|amount         | INT  | Traded Amount |
+|price          | INT  | Traded Price|
+|coinPrecision  | INT  | Traded Coin's Decimal Number|
+|pairCoinPrecision | INT  | Traded Pair Coin's Decimal Number|
+|isActive       | INT  | Pair's status|
+
+
+#### Response Example
+
+```
+{
+    "status": "success",
+    "data": [
+      {
+        "id": 2627
+        "coin": "XVG"
+        "pairCoin": "EUR"
+        "pair": "XVGEUR"
+        "amount": "1000.00000000"
+        "price": "0.12300000"
+        "coinPrecision": 2
+        "pairCoinPrecision": 6
+        "isActive": true
+      },
+      {
+        "id": 2628
+        "coin": "XVG"
+        "pairCoin": "EUR"
+        "pair": "XVGEUR"
+        "amount": "1000.00000000"
+        "price": "0.12300000"
+        "coinPrecision": 2
+        "pairCoinPrecision": 6
+        "isActive": true
+      }
+    ]
+}
+```
+
+### Account Balances (Require Signature)
+
+```
+GET /api/v1/account/balance
+```
+
+| Parameter  | Value |
+| ------------- | ------------- |
+| symbol | BTC |
+
+- Endpoint will give user's wallet balances
+
+**Request**
+
+```
+{
+    "symbol": "BTC"
+}
+```
+
+#### Response Example
+
+```
+ {
+    "status": "success",
+    "data": [
+      {
+        "symbol": "BTC",
+        "amount": "2116.28330195",
+        "reservedAmount": "2.89975867",
+        "lendingAmount": "0.00000000",
+      }
+    ]   
+ }
+```
+
+### Get Open Orders
+
+```
+GET /api/v1/market
+```
+
+- Get open Market Orders by pair and limit
+
+| Name | Type | Mandator | Description |
+| ------------- | ------------- | ------------- | ------------- |
+| symbol | STRING  | YES | SYMBOL OF THE PAIR |
+| limit  | INT  | YES | LIMIT OF THE ORDERS API |
+
+- You can get symbols from .... endpoint
+- Limits are 10, 25, 50
+
+#### Response Details
+
+| Name | Type |  Description |
+| ------------- | ------------- | ------------- |
+|AMOUNT       | STRING | Pair's status|
+|PRICE      | STRING  | Pair's status|
+
+#### Response Example
+
+```
+{
+  "status": "success",
+  "timestamp": 1576506570,
+  "bids": [
+    {
+      "price": "72010.00000000",
+      "amount": "2.42000000"
+    },
+    {
+      "price": "71010.00000000",
+      "amount": "0.24583160"
+    },
+    {
+      "price": "70010.00000000",
+      "amount": "0.24583160"
+    }
+  ],
+  "asks": [
+    {
+      "price": "77000.00000000",
+      "amount": "3.10000000"
+    },
+    {
+      "price": "78000.00000000",
+      "amount": "9.80000000"
+    },
+    {
+      "price": "79000.00000000",
+      "amount": "4.90000000"
+    },
+    {
+      "price": "80000.00000000",
+      "amount": "4.90000000"
+    }
+  ]
+}
+```
+
+
+### Connecting To Socket
+
+```
+POST api/broadcast/channel
+```
+
+User can get open orders, trades and wallet balance updates from socket connection.
+
+To get an authentication for the socket connection you must send a post request to the above endpoint to get  your keys
+
+#### Response Example
+
+```
+{
+    "status":"success",
+    "data":{
+        "auth":"{SOCKET_AUTH}",
+        "channel":"{CHANNEL}",
+        "key":"{SOCKET_AUTH_KEY}"
+    }
+}
+```
+
+
+With key and auth you can subscribe to the channel.
+
+- **Domain** : tools-n3.orkinos.me
+- **Port** : 17032
+
+User can join public channel whenever he/she wants.
+
+### Test Signature (Require Signature)
+
+```
+POST api/testSignature
+```
+
+Endpoint is for checking the validation of signature.
+
+- ##### Request Example:
+
+```
+{
+    "name": "Foo",
+    "surname": "Bar",
+    "location": "Milkyway Galaxy, Planet Earth"
+}
+```
+
+- ##### Response Example
+
+```
+ {
+     "status": "success"
+     "data": {
+         "payload": {
+             "name": "Foo",
+             "surname": "Bar",
+             "location": "Milkyway Galaxy, Planet Earth",
+             "timestamp": "1576500171",
+             "recvWindow": "5000",
+             "signature": "db9b4ab53f23d8559675f478b3ff5ad84ac4dea9961ac577d96c90b310e0433a"
+         },
+         "payloadString": "name=Foo&surname=Bar&location=Milkyway+Galaxy%2C+Planet+Earth&timestamp=1576500171&recvWindow=5000&signature=db9b4ab53f23d8559675f478b3ff5ad84ac4dea9961ac577d96c90b310e0433a",
+         "isAccepted": true
+     }
+ }
+```
+
+### Ping The System
+
+```
+GET api/ping
+```
+
+Endpoint is for checking the if the user can communicate with hte api.
+
+```
+ {
+    "status": "success"
+    "data": {
+      "message": "pong"
+    }
+ }
+```

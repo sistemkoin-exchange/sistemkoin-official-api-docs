@@ -439,7 +439,7 @@ To get an authentication for the socket connection you must send a post request 
 
 With key and auth you can subscribe to the channel.
 
-- **Domain** : tools-n3.orkinos.me
+- **Domain** : services.sistemkoin.com
 - **Port** : 17032
 
 User can join public channel whenever he/she wants.

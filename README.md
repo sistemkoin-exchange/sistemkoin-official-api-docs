@@ -102,7 +102,10 @@ Sample failure request payload:
 ## SIGNED Endpoint Examples for POST /api/v1/market
 Here is a step-by-step example of how to send a valid signed payload from the Linux command line using echo, openssl, and curl.
 
-
+This is also the example ofg making an order
+```
+POST /api/v1/market
+```
 | Parameter  | Value |
 | ------------- | ------------- |
 | symbol  | BTCTRY  |
@@ -169,13 +172,16 @@ symbol=BTCTRY&type=SELL&amount=1&price=49000&recvWindow=5000&timestamp=257311765
 
 ### Cancel Open Order (Require Signature)
 
+
 ```
 DELETE /api/v1/market
 ```
 
+- Users can delete their orders from delete endpoint.
+
 | Parameter  | Value |
 | ------------- | ------------- |
-| orderID | {order_id} | 
+| orderID | {order_id} |
 | signature | [SIGNATURE]
 
 - #### Request:
@@ -183,7 +189,7 @@ DELETE /api/v1/market
 ```
 {
     "orderID": "{order_id}",
-    "signature": "{SIGNATURE}" 
+    "signature": "{SIGNATURE}"
 }
 ```
 
@@ -194,7 +200,7 @@ DELETE /api/v1/market
 }
 ```
 
-### Account Order History 
+### Account Order History
 
 ```
 GET /api/v1/account/orders
@@ -344,7 +350,7 @@ GET /api/v1/account/balance
         "reservedAmount": "2.89975867",
         "lendingAmount": "0.00000000",
       }
-    ]   
+    ]
  }
 ```
 
@@ -498,3 +504,130 @@ Endpoint is for checking the if the user can communicate with hte api.
     }
  }
 ```
+
+### Ping The System
+
+```
+GET api/systime
+```
+
+Endpoint is for checking the if the user can communicate with hte api.
+
+```
+ {
+    "status": "success"
+    "data": {
+      'timestamp' : 1573397426,
+      'dateTimeString' => 2019-10-11 14:51:42,
+    }
+ }
+```
+
+### MARKET PAIRS
+
+```
+GET /market/pairs
+```
+
+- This endpoint returns pair infos
+
+```
+ {
+    "status": "success"
+    "data": {
+      'id'                     : 1,
+      'change'                 : 2,
+      'changeDirection'        : 1,
+      'changeValue'            : "1000",
+      'coinName'               : "Bitcoin",
+      'coinSymbol'             : "BTC",
+      'numberOfDigitsCoin'     : 8,
+      'numberOfDigitsPairCoin' : 2,
+      'pairCoinSymbol'         : "TRY",
+    }
+ }
+```
+
+### TICKER DATA
+
+```
+GET /market/ticker
+```
+
+- This endpoint returns pairs' market data
+
+```
+ {
+    "status": "success"
+    "data": {
+        "TRY": {
+            "DEEX": {
+                "symbol": "DEEX",
+                "high": "0.076173",
+                "low": "0.070125",
+                "askPrice": "0.09000000",
+                "bidPrice": "0.08100000",
+                "current": "0.076173",
+                "volume": "4097.997093",
+                "changeAmount": "0.00531600",
+                "changePercentage": "7.50"
+                 },
+            "IGG": {
+                "symbol": "IGG",
+                "high": "0.000503",
+                "low": "0.000500",
+                "askPrice": "0.00060000",
+                "bidPrice": "0.00022600",
+                "current": "0.000503",
+                "volume": "8361.999966",
+                "changeAmount": "0.00000200",
+                "changePercentage": "0.40"
+    }
+  }
+}
+```
+
+### PROFILE DETAILS
+
+```
+GET /account/details
+```
+
+- This endpoint returns pairs' market data
+
+```
+ {
+    "status": "success"
+    "data": {
+        email                : "fo@bar.com"
+        name                 : "Foo"
+        surname              : "Bar"
+        locale               : "{LOCALE}"
+        refCode              : "3432432"
+        phone                : "+905*********"
+        verified             : 1
+        usePinCode           : 1
+        lastSessionIP        : "170.**.***.**"
+        useStkCoinForPayFees : 1
+   }
+ }
+```
+
+### GET USER FEES
+
+```
+GET /coins/fee
+```
+
+- This endpoint returns user's fee details for specific coin in percentage
+
+```
+ {
+    "status": "success"
+    "data": {
+        buyFee  : 1
+        sellFee : 1
+   }
+ }
+```
+

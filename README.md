@@ -555,7 +555,7 @@ Endpoint is for checking the if the user can communicate with the api.
  }
 ```
 
-### Ping The System
+### Get System Time
 
 ```
 GET api/systime
@@ -643,7 +643,7 @@ GET /market/ticker
 GET /account/details
 ```
 
-- This endpoint returns pairs' market data
+- This endpoint returns profile info
 
 ```
  {

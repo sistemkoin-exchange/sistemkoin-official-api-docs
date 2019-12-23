@@ -417,6 +417,56 @@ GET /api/v1/market
   ]
 }
 ```
+### Get Last Trades
+
+```
+GET /api/v1/trade
+```
+
+- Endpoint gives pair's trade history
+
+| Name | Type | Mandator | Description |
+| ------------- | ------------- | ------------- | ------------- |
+| symbol | STRING  | YES | SYMBOL OF THE PAIR |
+| limit  | INT  | YES | LIMIT OF THE ORDERS API |
+
+- You can get symbols from .... endpoint
+- Limits are 10, 25, 50
+
+#### Response Details
+
+| Name | Type |  Description |
+| ------------- | ------------- | ------------- |
+|PRICE       | STRING | Price of Trade |
+|VOLUME      | STRING  | Amount of the traded coin|
+|FUNDS      | STRING  | Total amount of Pair Coin's Trade |
+|SIDE      | STRING  | BID OR ASK|
+|TIMESTAMP      | INTEGER  | Time of the Trade|
+
+#### Response Example
+
+```
+{
+  "status": "success",
+  {
+    "data": [
+      {
+        "price": "49000.00000000",
+        "volume": "1.00000000",
+        "funds": "49000.00000000",
+        "side": "bid",
+        "timestamp": 1577099182
+      },
+      {
+        "price": "48000.00000000",
+        "volume": "2.00000000",
+        "funds": "96000.00000000",
+        "side": "bid",
+        "timestamp": 1577099181
+      },
+    ]
+```
+
 
 
 ### Connecting To Socket
@@ -494,7 +544,7 @@ Endpoint is for checking the validation of signature.
 GET api/ping
 ```
 
-Endpoint is for checking the if the user can communicate with hte api.
+Endpoint is for checking the if the user can communicate with the api.
 
 ```
  {
@@ -511,7 +561,7 @@ Endpoint is for checking the if the user can communicate with hte api.
 GET api/systime
 ```
 
-Endpoint is for checking the if the user can communicate with hte api.
+Endpoint is for checking the if the user can communicate with the api.
 
 ```
  {

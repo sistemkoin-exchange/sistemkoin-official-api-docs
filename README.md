@@ -208,7 +208,7 @@ GET /api/v1/account/orders
 
 Request filters;
 ```
-symbol  : STRING     : Coin symbol
+symbol  : STRING     : Pair symbol
 status  : ENUM       : PENDING, PARTIALLY_FILLED, FILLED
 side    : ENUM       : asks, bids
 ```

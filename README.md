@@ -206,6 +206,13 @@ DELETE /api/v1/market
 GET /api/v1/account/orders
 ```
 
+Request filters;
+```
+symbol  : STRING     : Coin symbol
+status  : ENUM       : PENDING, PARTIALLY_FILLED, FILLED
+side    : ENUM       : asks, bids
+```
+
 - Endpoint will give user's order history
 
 #### Response Details

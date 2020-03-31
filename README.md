@@ -135,7 +135,7 @@ symbol=BTCTRY&type=BUY&amount=1&price=0.1&recvWindow=5000&timestamp=149982731955
 
 > (HMAC SHA256)
 ```
-[linux]$ curl -H "X-MBX-APIKEY: [API_KEY]" -X POST 'https://api.sistemkoin.com/api/v1/market' -d 'symbol=BTCTRY&type=SELL&amount=1&price=49000&recvWindow=5000&timestamp=2573117658&signature=6616471dd1bd11caa6363fbc52efc1d37e82ce7fa678328d3c7168e5c6a7ace8'
+[linux]$ curl -H "X-STK-ApiKey: [API_KEY]" -X POST 'https://api.sistemkoin.com/api/v1/market' -d 'symbol=BTCTRY&type=SELL&amount=1&price=49000&recvWindow=5000&timestamp=2573117658&signature=6616471dd1bd11caa6363fbc52efc1d37e82ce7fa678328d3c7168e5c6a7ace8'
 ```
 
 ## Example 2: As a query string
@@ -155,7 +155,7 @@ symbol=BTCTRY&type=SELL&amount=1&price=49000&recvWindow=5000&timestamp=257311765
 
 > (HMAC SHA256)
 ```
-[linux]$ curl -H "X-MBX-APIKEY: [API_KEY]" -X POST 'https://api.sistemkoin.com/api/v1/market?symbol=BTCTRY&type=SELL&amount=1&price=49000&recvWindow=5000&timestamp=2573117658&signature=6616471dd1bd11caa6363fbc52efc1d37e82ce7fa678328d3c7168e5c6a7ace8'
+[linux]$ curl -H "X-STK-ApiKey: [API_KEY]" -X POST 'https://api.sistemkoin.com/api/v1/market?symbol=BTCTRY&type=SELL&amount=1&price=49000&recvWindow=5000&timestamp=2573117658&signature=6616471dd1bd11caa6363fbc52efc1d37e82ce7fa678328d3c7168e5c6a7ace8'
 ```
 
 - Terminology base asset refers to the asset that is the quantity of a symbol. quote asset refers to the asset that is the price of a symbol. ENUM definitions Symbol status (status):
@@ -479,7 +479,7 @@ GET /api/v1/trade
 ### Connecting To Socket
 
 ```
-POST api/broadcast/channel
+POST /api/broadcast/channel
 ```
 
 User can get open orders, trades and wallet balance updates from socket connection.
@@ -510,7 +510,7 @@ User can join public channel whenever he/she wants.
 ### Test Signature (Require Signature)
 
 ```
-POST api/testSignature
+POST /api/testSignature
 ```
 
 Endpoint is for checking the validation of signature.
@@ -548,7 +548,7 @@ Endpoint is for checking the validation of signature.
 ### Ping The System
 
 ```
-GET api/ping
+GET /api/ping
 ```
 
 Endpoint is for checking the if the user can communicate with the api.
@@ -565,7 +565,7 @@ Endpoint is for checking the if the user can communicate with the api.
 ### Get System Time
 
 ```
-GET api/systime
+GET /api/systime
 ```
 
 Endpoint is for checking the if the user can communicate with the api.
@@ -583,7 +583,7 @@ Endpoint is for checking the if the user can communicate with the api.
 ### MARKET PAIRS
 
 ```
-GET /market/pairs
+GET /api/v1/market/pairs
 ```
 
 - This endpoint returns pair infos
@@ -608,7 +608,7 @@ GET /market/pairs
 ### TICKER DATA
 
 ```
-GET /market/ticker
+GET /api/v1/market/ticker
 ```
 
 - This endpoint returns pairs' market data
@@ -647,7 +647,7 @@ GET /market/ticker
 ### PROFILE DETAILS
 
 ```
-GET /account/details
+GET /api/v1/account/details
 ```
 
 - This endpoint returns profile info
@@ -673,7 +673,7 @@ GET /account/details
 ### GET USER FEES
 
 ```
-GET /coins/fee
+GET /api/v1/coins/fee
 ```
 
 - This endpoint returns user's fee details for specific coin in percentage
